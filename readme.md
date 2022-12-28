@@ -1,10 +1,9 @@
-
-
 Community Well-Being Dashboard
 ======
+
 Initialized December 27 2022
 
-Code associated with the UW PHI Social Weather Project: Community Well-Being Dashboard. 
+Code associated with the UW PHI & Social Weather "Community Well-Being Dashboard."
 
 ## Project Purpose
 -----
