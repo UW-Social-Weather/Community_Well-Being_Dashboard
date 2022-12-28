@@ -1,0 +1,14 @@
+name: new_sw_app
+title: new_sw_app
+username: frc2
+account: frc2
+server: rsc.csde.washington.edu
+hostUrl: https://rsc.csde.washington.edu/__api__
+appId: 67
+bundleId: 478
+url: https://rsc.csde.washington.edu/content/2c9873aa-4bc3-4d6e-b6fb-b9e574682016/
+when: 1672254693.35016
+lastSyncTime: 1672254693.35016
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: readme.md|01_raw_data|02_data_processing
