@@ -101,9 +101,14 @@ final_dt <- rbind(final_state_dt, final_county_dt)
 
 # set file path and file name of final data
 prepped_data_dir <- "./03_final_data/"
+shiny_data_dir <- "./new_sw_app/data/"
 prepped_state_file <- "18_prepped_lat_long_data_states.RDS"
 prepped_county_file <- "19_prepped_lat_long_data_counties.RDS"
 
 # save final dataset
 saveRDS(final_state_dt, file = paste0(prepped_data_dir, prepped_state_file))
 saveRDS(final_dt, file = paste0(prepped_data_dir, prepped_county_file))
+
+# save final dataset in the folder with the R Shiny Code
+saveRDS(final_state_dt, file = paste0(shiny_data_dir, prepped_state_file))
+saveRDS(final_dt, file = paste0(shiny_data_dir, prepped_county_file))

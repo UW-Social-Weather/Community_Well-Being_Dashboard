@@ -16,21 +16,21 @@ library(mapview)
 library(webshot)
 
 # load the data necessary for the project
-data <- readRDS("./03_final_data/16_final_data_for_maps.RDS") 
+data <- readRDS("./data/16_final_data_for_maps.RDS") 
 
 # load all of the files containing the county shapefiles
-counties.map <- readRDS("./03_final_data/17_county_shapefile.RDS")
+counties.map <- readRDS("./data/17_county_shapefile.RDS")
 
 # load label table
-label_table <- read_xlsx("./03_final_data/label_table.xlsx")
+label_table <- read_xlsx("./data/label_table.xlsx")
 health_vars <- label_table$label[1:10]
 
 # load lat/long coordinate data
-coordinate_data <- readRDS("./03_final_data/18_prepped_lat_long_data_states.RDS")
+coordinate_data <- readRDS("./data/18_prepped_lat_long_data_states.RDS")
 state_vars <- coordinate_data$state_name
 
 # load the county level lat/long coordinate data
-county_coordinates <- readRDS("./03_final_data/19_prepped_lat_long_data_counties.RDS")
+county_coordinates <- readRDS("./data/19_prepped_lat_long_data_counties.RDS")
 
 # Define UI  ----
 ui <- fluidPage(

@@ -38,6 +38,8 @@ us.map <- us.map[!us.map$STATEFP %in% c("81", "84", "86", "87", "89", "71", "76"
 
 # save the dataset
 saveRDS(dat, file = "./03_final_data/16_final_data_for_maps.RDS")
+saveRDS(dat, file = "./new_sw_app/data/16_final_data_for_maps.RDS")
 
 # save the shapefile for mapping
 saveRDS(us.map, file = "./03_final_data/17_county_shapefile.RDS")
+saveRDS(us.map, file = "./new_sw_app/data/17_county_shapefile.RDS")
