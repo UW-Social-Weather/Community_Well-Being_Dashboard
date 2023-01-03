@@ -8,6 +8,7 @@ library(readxl)
 library(writexl)
 
 # save necessary filepaths
+# Note: the working directory should be the root of this repository
 raw_data_dir <- "./01_raw_data/"
 containing_folder <- "dataset1_GDP/"
 raw_file <- "lagdp1222.xlsx"
@@ -91,16 +92,38 @@ location_map <- location_map %>% mutate(merge_id = case_when(
   location_code==51760 ~ "richmondcityvirginia",
   TRUE ~ merge_id
 ))
-# raw_data <- raw_data %>% mutate(merge_id = case_when(
-#   location=="Alexandria" ~ "alexandriacityvirginia",
-#   location=="Chesapeake" ~ "chesapeakecityvirginia",m
-#   location=="Hampton" ~ "hamptoncityvirginia",
-#   location=="Newport News" ~ "newportnewscityvirginia",
-#   location=="Norfolk" ~ "norfolkcityvirginia",
-#   location=="Portsmouth" ~ "portsmouthcityvirginia",
-#   location=="Suffolk" ~ "suffolkcityvirginia",
-#   location=="Virginia Beach" ~ "virginiabeachcityvirginia",
-#   TRUE ~ merge_id))
+
+# drop locations that are not in the official list of counties
+# this dataset includes counties that no longer exist as well as County/City 
+# combinations for some regions
+
+raw_data <- raw_data %>% filter(location!="Chugach Census Area1" &
+                                  location!="Copper River Census Area1" & 
+                                  location!="Valdez-Cordova Census Area1" &
+                                  location!="Maui + Kalawao" &
+                                  location!="Albemarle + Charlottesville" &
+                                  location!="Alleghany + Covington" &
+                                  location!="Augusta, Staunton + Waynesboro" &
+                                  location!="Campbell + Lynchburg" &
+                                  location!="Carroll + Galax" &
+                                  location!="Dinwiddie, Colonial Heights + Petersburg" &
+                                  location!="Fairfax, Fairfax City + Falls Church" &
+                                  location!="Frederick + Winchester" &
+                                  location!="Greensville + Emporia" &
+                                  location!="Henry + Martinsville" &
+                                  location!="James City + Williamsburg" &
+                                  location!="Montgomery + Radford" &
+                                  location!="Pittsylvania + Danville" &
+                                  location!="Prince George + Hopewell" &
+                                  location!="Prince William, Manassas + Manassas Park" &
+                                  location!="Roanoke + Salem" &
+                                  location!="Rockbridge, Buena Vista + Lexington" &
+                                  location!="Rockingham + Harrisonburg" &
+                                  location!="Southampton + Franklin" &
+                                  location!="Spotsylvania + Fredericksburg" &
+                                  location!="Washington + Bristol" &
+                                  location!="Wise + Norton" &
+                                  location!="York + Poquoson")
 
 # check to see which county and state combinations do not line up
 map_check <- paste0(location_map$merge_id)
@@ -109,8 +132,7 @@ unmapped_locs <- raw_data[!data_check%in%map_check,]
 
 if(nrow(unmapped_locs)>0){
   print(unique(unmapped_locs[, c("state_name", "location", "merge_id"), with= FALSE]))
-  # print(unique(unmapped_codes$file_name)) #For documentation in the comments above.
-  stop("You have locations in the data that aren't in the codebook!")
+  stop("You have locations in the data that aren't in the official list of counties!")
 }
 
 # remove state name from raw data before merge

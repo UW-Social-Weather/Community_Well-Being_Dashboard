@@ -55,10 +55,13 @@ extracted_data <- extracted_data %>% mutate(merge_code = case_when(
   county_name=="Petersburg Census Area" & state_abbreviation=="AK" ~ "petersburgboroughak",
   county_name=="Carson City" & state_abbreviation=="NV" ~ "carsoncitycitynv",
   county_name=="Radford" & state_abbreviation=="VA" ~ "radfordcityva",
-  county_name=="Dona Ana" & state_abbreviation=="NM" ~ "doÃ±aananm",
+  county_name=="Dona Ana" & state_abbreviation=="NM" ~ "doñaananm",
   county_name=="Montgomery County" & state_abbreviation=="AR" ~ "montgomeryar",
   TRUE ~ merge_code 
 ))
+
+# drop the dc location which is not included in final dataset
+extracted_data <- extracted_data %>% filter(county_name!="District of Columbia")
 
 map_check <- paste0(location_map_final$merge_code)
 data_check <- paste0(extracted_data$merge_code)

@@ -58,13 +58,15 @@ raw_county_dt <- raw_county_dt %>%
       fips_tooshort==FALSE ~ paste0(FIPS))
   )
 
+# drop counties that no longer exist
+raw_county_dt <- raw_county_dt %>% filter(fips_code!=51515)
+
 # load the location map to standardize the names
 location_map <- read_xlsx("./01_raw_data/location_maps/prepped_data/02_county_location_map.xlsx")
 
 map_check <- paste0(location_map$location_code)
 data_check <- paste0(raw_county_dt$fips_code)
 unmapped_locs <- raw_county_dt[!data_check%in%map_check,]
-
 
 if(nrow(unmapped_locs)>0){
   print(unique(unmapped_locs[, c("County [2]", "FIPS", "fips_code")]))
@@ -88,9 +90,9 @@ final_county_dt <- rename(final_county_dt, county_name=location_name,
 final_county_dt$zoom <- 9
 
 # re-format the variables for long and lat
-final_county_dt$lat <- gsub("°", "", final_county_dt$lat)
-final_county_dt$long <- gsub("°", "", final_county_dt$long)
-final_county_dt$long <- gsub("-", "-", final_county_dt$long)
+final_county_dt$lat <- gsub("Â°", "", final_county_dt$lat)
+final_county_dt$long <- gsub("Â°", "", final_county_dt$long)
+final_county_dt$long <- gsub("â€“", "-", final_county_dt$long)
 
 final_county_dt$lat <- as.numeric(final_county_dt$lat)
 final_county_dt$long <- as.numeric(final_county_dt$long)

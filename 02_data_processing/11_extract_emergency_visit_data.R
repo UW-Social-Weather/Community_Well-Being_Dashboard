@@ -22,7 +22,7 @@ for (i in 1: length(files)){
   
   # load data file
   raw_file <- files[i]
-  dt <- read.csv(file=paste0(raw_file))
+  dt <- read.csv(file=paste0(raw_file), na.strings=c("","NA"))
   
   # subset columns of interest
   dt <- dt %>% select(year, fips, county, state, analysis_value)
@@ -57,6 +57,13 @@ extracted_data <- extracted_data %>% mutate(fips_code = case_when(
   county=="Wade Hampton Census Area" ~ "02158",
   TRUE ~ fips_code
 ))
+
+# drop rows that are not at proper county-level data (missing county information)
+extracted_data <- extracted_data %>% filter(!is.na(county)) %>%
+  filter(county!=TRUE)
+
+# Bedford City, Virginia is no longer an independent county
+extracted_data <- extracted_data %>% filter(fips_code!=51515)
 
 # check for fips codes that are not in the location map
 map_check <- paste0(location_map$location_code)

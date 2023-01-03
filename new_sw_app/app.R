@@ -15,6 +15,28 @@ library(DT)
 library(mapview)
 library(webshot)
 
+# webshot::install_phantomjs()
+
+# verify installation of phantomjs to load downloader
+# phantomjs_path <- webshot:::find_phantom()
+# 
+# if (is.null(phantomjs_path)){
+#   FlgJS <- F
+# } else {
+#   FlgJS <- T
+# }
+# 
+# phantomjs_path2 <- webshot:::find_phantom()
+# (FlgJS2 <- !(is.null(phantomjs_path2)))
+# 
+# EtatInstallationJS <- ifelse(isTRUE(FlgJS),
+#                              "1-PhJS already installed",
+#                              ifelse(isTRUE(FLgJS2),
+#                                     "2-PhJS has just been installed",
+#                                     "3-PhJS was not installed"))
+# 
+# print(EtatInstallationJS)
+
 # load the data necessary for the project
 data <- readRDS("./data/16_final_data_for_maps.RDS") 
 
@@ -95,6 +117,8 @@ ui <- fluidPage(
 
 # Define server logic ----
 server <- function(input, output, session) {
+  
+  # if (is.null(suppressMessages(webshot:::find_phantom()))) { webshot::install_phantomjs() }
 
   myData <- reactive({
     x <- input$var 
@@ -244,7 +268,7 @@ server <- function(input, output, session) {
   })
   
   output$dl <- downloadHandler(
-    filename = paste0(Sys.Date(), "_customLeafletmap", ".png"), 
+    filename = paste0(Sys.Date(), "_custommap", ".png"), 
     content = function(file) {
       mapshot(x = user.created.map(), 
               file = file, 

@@ -48,11 +48,16 @@ dt <- dt %>% mutate(merge_code = case_when(
   county=="Hillsborough County" & state==" Florida" ~ "hillsboroughflorida",
   county=="Carson City" & state==" Nevada" ~ "carsoncitycitynevada",
   county=="Hillsborough County" & state==" New Hampshire" ~ "hillsboroughnewhampshire",
-  county=="Doña Ana County" & state==" New Mexico" ~ "do�aananewmexico",
+  county=="Doña Ana County" & state==" New Mexico" ~ "do�aananewmexico",
   county=="Shannon County" & state==" South Dakota" ~ "oglalalakotasouthdakota",
   TRUE ~ merge_code
 ))
 
+# dropping district of columbia and Bedford City from the dataset since these 
+# are not included in the official list of counties
+dt <- dt %>% filter(county!="District of Columbia") %>% filter(county!="Bedford city")
+
+# double check that all
 map_check <- paste0(location_map$merge_code)
 data_check <- paste0(dt$merge_code)
 unmapped_locs <- dt[!data_check%in%map_check,]
@@ -60,7 +65,7 @@ unmapped_locs <- dt[!data_check%in%map_check,]
 if(nrow(unmapped_locs)>0){
   print(unique(unmapped_locs[, c("county", "state", "merge_code")]))
   # print(unique(unmapped_codes$file_name)) #For documentation in the comments above. 
-  stop("You have locations in the data that aren't in the codebook!")
+  stop("You have locations in the data that aren't in the official list of counties!")
 }
 
 # merge the dataset and the location codebook

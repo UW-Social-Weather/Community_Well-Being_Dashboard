@@ -21,6 +21,9 @@ extracted_data <- extracted_data %>% select(state, county_name, fips, year, tota
 # load the location map
 location_map <- read_xlsx("./01_raw_data/location_maps/prepped_data/02_county_location_map.xlsx")
 
+# drop the Wade Hampton Census Area 02270 which no longer exists...
+extracted_data <- extracted_data %>% filter(county_name!="Wade Hampton Census Area")
+
 # check for fips codes that are not in the location map
 map_check <- paste0(location_map$location_code)
 data_check <- paste0(extracted_data$fips)
@@ -28,8 +31,7 @@ unmapped_locs <- extracted_data[!data_check%in%map_check,]
 
 if(nrow(unmapped_locs)>0){
   print(unique(unmapped_locs[, c("state", "county_name", "fips"), with= FALSE]))
-  # print(unique(unmapped_codes$file_name)) #For documentation in the comments above. 
-  stop("You have locations in the data that aren't in the codebook!")
+  stop("You have locations in the data that aren't in the final list of counties!")
 }
 
 # merge dataset with the complete location map

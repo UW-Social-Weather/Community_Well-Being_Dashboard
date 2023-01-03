@@ -27,10 +27,6 @@ dt_subset$fips_tooshort <- ifelse(nchar(dt_subset$STCOFIPS)<5, "TRUE", "FALSE")
 # add a leading zero to the locations with fips codes that are too short
 dt_subset$fips_code <- NA
 
-for (i in 1:length(dt_subset)){
-  dt_subset$fips_code[i] <- ifelse(dt_subset$fips_tooshort==TRUE, paste0("0", dt_subsetSTCOFIPS), STCOFIPS)
-}
-
 dt_subset$fips_code <- ifelse(dt_subset$fips_tooshort==TRUE, paste0("0", dt_subset$STCOFIPS), dt_subset$STCOFIPS)
 
 # merge code book and data
