@@ -48,7 +48,7 @@ dt <- dt %>% mutate(merge_code = case_when(
   county=="Hillsborough County" & state==" Florida" ~ "hillsboroughflorida",
   county=="Carson City" & state==" Nevada" ~ "carsoncitycitynevada",
   county=="Hillsborough County" & state==" New Hampshire" ~ "hillsboroughnewhampshire",
-  county=="Doña Ana County" & state==" New Mexico" ~ "do�aananewmexico",
+  county=="Doña Ana County" & state==" New Mexico" ~ "doñaananewmexico",
   county=="Shannon County" & state==" South Dakota" ~ "oglalalakotasouthdakota",
   TRUE ~ merge_code
 ))
