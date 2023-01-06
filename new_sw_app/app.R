@@ -14,29 +14,7 @@ library(plotly)
 library(DT)
 library(mapview)
 library(shinyscreenshot)
-# library(webshot)
-
-# webshot::install_phantomjs()
-
-# # verify installation of phantomjs to load downloader
-# phantomjs_path <- webshot:::find_phantom()
-# 
-# if (is.null(phantomjs_path)){
-#   FlgJS <- F
-# } else {
-#   FlgJS <- T
-# }
-# 
-# phantomjs_path2 <- webshot:::find_phantom()
-# (FlgJS2 <- !(is.null(phantomjs_path2)))
-# 
-# EtatInstallationJS <- ifelse(isTRUE(FlgJS),
-#                              "1-PhJS already installed",
-#                              ifelse(isTRUE(FLgJS2),
-#                                     "2-PhJS has just been installed",
-#                                     "3-PhJS was not installed"))
-# 
-# print(EtatInstallationJS)
+library(shinycssloaders)
 
 # load the data necessary for the project
 data <- readRDS("./data/16_final_data_for_maps.RDS") 
@@ -97,10 +75,6 @@ ui <- fluidPage(
                  div(actionButton("go", "Download map as png", 
                                   icon = shiny::icon("camera"),
                                   style = "float:right")),
-                 # div(downloadButton(outputId = "dl",
-                 #                 label = "Download map as png",
-                 #                 icon = shiny::icon("camera")),
-                     # style="float:right"),
                  leafletOutput("mymap")),
         
         tabPanel("View Trends", verbatimTextOutput("trendview"),
@@ -140,7 +114,6 @@ server <- function(input, output, session) {
       updateSelectInput(session, "range",
                         label = "Year of interest:",
                         choices = seq(myData()$start_year, myData()$end_year, by=myData()$by),
-                        # choices = c(myData()$start_year:myData()$end_year),
                         selected = myData()$end_year)
   })
     
@@ -151,7 +124,7 @@ server <- function(input, output, session) {
                         selected = "Select County")
     })
     
-    foundational.map <- reactive({
+    output$mymap <- renderLeaflet({
       
       # these are the inputs that are required to properly plot the data
       req(input$range)
@@ -197,7 +170,7 @@ server <- function(input, output, session) {
       
       pal <- colorQuantile("YlGnBu", NULL, n=4)
       
-      
+      ############################################# draw map #############################################
       leaflet(data = leafmap) %>%
         addTiles() %>%
         # setView(-95, 39, 4) %>%
@@ -214,72 +187,7 @@ server <- function(input, output, session) {
                   title = paste0(input$var, "\n", "County Quartiles"))
     })
   
-    
-  output$mymap <- renderLeaflet({
-    
-
-    foundational.map()
-    # pal <- colorNumeric(
-    #   palette = "YlGnBu",
-    #   domain = var
-    # )
-    
-    
-    ############################################# draw map #############################################
-    
-    
-    
-    
-    # leaflet(data = leafmap) %>%
-    #   addTiles() %>%
-    #   # setView(-95, 39, 4) %>%
-    #   setView(long, lat, zoom=zoom) %>%
-    #   addPolygons(fillColor = ~pal(var),
-    #               # fillColor = ~pal(var),
-    #               fillOpacity = 0.8,
-    #               color = "#BDBDC3",
-    #               weight = 1,
-    #               popup = popup_dat) %>%
-    #   addLegend("bottomright",  # location
-    #             pal = pal,     # palette function
-    #             values = ~as.numeric(var),
-    #             title = paste0(input$var, "\n", "County Quartiles"))
-    
-    })
-  
-  ##################### save map as pdf
-  # user.created.map <- reactive({
-  #   
-  #   foundational.map()
-  #   
-  #   # # store same map in a reactive expression
-  #   # leaflet(data = leafmap) %>%
-  #   #   addTiles() %>%
-  #   #   # setView(-95, 39, 4) %>%
-  #   #   setView(long, lat, zoom=zoom) %>%
-  #   #   addPolygons(fillColor = ~pal(var),
-  #   #               # fillColor = ~pal(var),
-  #   #               fillOpacity = 0.8,
-  #   #               color = "#BDBDC3",
-  #   #               weight = 1,
-  #   #               popup = popup_dat) %>%
-  #   #   addLegend("bottomright",  # location
-  #   #             pal = pal,     # palette function
-  #   #             values = ~as.numeric(var),
-  #   #             title = paste0(input$var, "\n", "County Quartiles"))
-  # })
-  
-  # output$dl <- downloadHandler(
-  #   filename = paste0(Sys.Date(), "_custommap", ".png"), 
-  #   content = function(file) {
-  #     mapshot(x = user.created.map(), 
-  #             file = file, 
-  #             cliprect = "viewport", # the clipping rectangle matches the height & width from the viewing port
-  #             selfcontained = TRUE # when this was not specified, the function for produced a PDF of two pages: one of the leaflet map, the other a blank page.
-  #     )
-  #   } # end of content() function
-  # ) # end of downloadHandler() function
-  
+  # define screenshot function that allows maps to be downloaded as PNGs
   observeEvent(input$go, {
     screenshot(id = "mymap",
                filename = paste0(Sys.Date(), "_custommap"),
