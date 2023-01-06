@@ -97,7 +97,6 @@ final_county_dt$long <- gsub("–", "-", final_county_dt$long)
 final_county_dt$lat <- as.numeric(final_county_dt$lat)
 final_county_dt$long <- as.numeric(final_county_dt$long)
 
-
 # bind the two datasets together
 final_dt <- rbind(final_state_dt, final_county_dt)
 

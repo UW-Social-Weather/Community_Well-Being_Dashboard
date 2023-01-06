@@ -16,26 +16,21 @@ raw_file <- "Air Qulality_Compiled Counties.xlsx"
 extracted_data <- read_xlsx(paste0(raw_data_dir, containing_folder, raw_file))
 
 # subset data
-dt_subset <- extracted_data %>% select(State, County, Year, `Days with AQI`, `Good Days`)
+dt_subset <- extracted_data %>% select(State, County, Year, Days.with.AQI, Good.Days)
 
 # drop rows pertaining to locations that are not standardized in other datasets/in the location map
 dt <- dt_subset %>% filter(State != "Canada" 
                            & State != "Country Of Mexico" 
                            & State != "District Of Columbia"
-                           & County != "MOBILE MONITORS")
+                           & County != "MOBILE MONITORS"
+                           & State != "Puerto Rico"
+                           & State != "TRUE")
 # dt %>% filter(State=="District of Columbia")
 
 # create merge code from county name and state name
 dt$merge_code <- tolower(gsub(" ", "",paste0(dt$County, dt$State), fixed = TRUE))
 dt$merge_code <- gsub("saint", "st", dt$merge_code)
 dt$merge_code <- gsub("[[:punct:]]", "", dt$merge_code)
-
-# dt$merge_code <- gsub("censusarea", "", dt$merge_code)
-# dt$merge_code <- gsub("municipality", "", dt$merge_code)
-# dt$merge_code <- gsub("cityandborough", "", dt$merge_code)
-# dt$merge_code <- gsub("borough", "", dt$merge_code)
-# dt$merge_code <- gsub("parish", "", dt$merge_code)
-# dt$merge_code <- gsub("caalaska", "alaska", dt$merge_code)
 dt$merge_code <- gsub("\\.", "", dt$merge_code)
 
 # load location map
@@ -43,20 +38,14 @@ location_map <- read_rds("./01_raw_data/location_maps/prepped_data/02_county_loc
 
 location_map$merge_code <- tolower(gsub(" ", "",paste0(location_map$location_name, location_map$state_name), fixed = TRUE))
 location_map$merge_code <- gsub("[[:punct:]]", "", location_map$merge_code)
-location_map$merge_code <- gsub("citycity", "city", location_map$merge_code)
-# location_map$merge_code <- gsub("caalaska", "alaska", location_map$merge_code)
+location_map$merge_code <- gsub("citycity", "city", location_map$merge_code) 
 location_map$merge_code <- gsub("\\.", "", location_map$merge_code)
 
 # manually edit a few merge codes in the extracted data to match what is in the location map
 dt <- dt %>% mutate(merge_code = case_when(
   County=="Valdez-Cordova" & State=="Alaska" ~ "valdezcordovacaalaska",
   County=="Dona Ana" & State=="New Mexico" ~ "doñaananewmexico",
-  County=="Bayamon" & State=="Puerto Rico" ~ "bayamónpuertorico",
   County=="Charles" & State=="Virginia" ~ "charlescityvirginia",
-  County=="Manati" & State=="Puerto Rico" ~ "manatípuertorico",
-  County=="Catano" & State=="Puerto Rico" ~ "catañopuertorico",
-  County=="Rio Grande" & State=="Puerto Rico" ~ "ríograndepuertorico",
-  County=="Mayagnez" & State=="Puerto Rico" ~ "mayagüezpuertorico",
   County=="Skagway-Hoonah-Angoon" & State=="Alaska" ~ "skagwayalaska",
   County=="Wrangell Petersburg" & State=="Alaska" ~ "wrangellalaska",
   County=="Yukon-Koyukuk" & State=="Alaska" ~ "yukonkoyukukcaalaska",
@@ -78,7 +67,7 @@ if(nrow(unmapped_locs)>0){
 merged_dt <- inner_join(dt, location_map, by="merge_code")
 
 # calculate: good days aqi
-merged_dt$good_aqi <- merged_dt$`Good Days`/merged_dt$`Days with AQI`
+merged_dt$good_aqi <- merged_dt$Good.Days/merged_dt$Days.with.AQI
 
 # subset columns of interest
 final_dt <- merged_dt %>% select(state_name, location_name, location_code, 

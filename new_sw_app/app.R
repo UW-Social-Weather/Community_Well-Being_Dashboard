@@ -13,11 +13,12 @@ library(readxl)
 library(plotly)
 library(DT)
 library(mapview)
-library(webshot)
+library(shinyscreenshot)
+# library(webshot)
 
 # webshot::install_phantomjs()
 
-# verify installation of phantomjs to load downloader
+# # verify installation of phantomjs to load downloader
 # phantomjs_path <- webshot:::find_phantom()
 # 
 # if (is.null(phantomjs_path)){
@@ -93,10 +94,13 @@ ui <- fluidPage(
                  fluidRow(column(width = 12, "Use the left panel to filter data according to year and location. 
                                  Please note that data are not currently available for every county and every year.", 
                                  style='text-align:center')),
-                 div(downloadButton(outputId = "dl",
-                                 label = "Download map as png",
-                                 icon = shiny::icon("camera")),
-                     style="float:right"),
+                 div(actionButton("go", "Download map as png", 
+                                  icon = shiny::icon("camera"),
+                                  style = "float:right")),
+                 # div(downloadButton(outputId = "dl",
+                 #                 label = "Download map as png",
+                 #                 icon = shiny::icon("camera")),
+                     # style="float:right"),
                  leafletOutput("mymap")),
         
         tabPanel("View Trends", verbatimTextOutput("trendview"),
@@ -118,8 +122,6 @@ ui <- fluidPage(
 # Define server logic ----
 server <- function(input, output, session) {
   
-  # if (is.null(suppressMessages(webshot:::find_phantom()))) { webshot::install_phantomjs() }
-
   myData <- reactive({
     x <- input$var 
     years_available <- label_table %>% filter(label==x)
@@ -246,37 +248,43 @@ server <- function(input, output, session) {
     })
   
   ##################### save map as pdf
-  user.created.map <- reactive({
-    
-    foundational.map()
-    
-    # # store same map in a reactive expression
-    # leaflet(data = leafmap) %>%
-    #   addTiles() %>%
-    #   # setView(-95, 39, 4) %>%
-    #   setView(long, lat, zoom=zoom) %>%
-    #   addPolygons(fillColor = ~pal(var),
-    #               # fillColor = ~pal(var),
-    #               fillOpacity = 0.8,
-    #               color = "#BDBDC3",
-    #               weight = 1,
-    #               popup = popup_dat) %>%
-    #   addLegend("bottomright",  # location
-    #             pal = pal,     # palette function
-    #             values = ~as.numeric(var),
-    #             title = paste0(input$var, "\n", "County Quartiles"))
-  })
+  # user.created.map <- reactive({
+  #   
+  #   foundational.map()
+  #   
+  #   # # store same map in a reactive expression
+  #   # leaflet(data = leafmap) %>%
+  #   #   addTiles() %>%
+  #   #   # setView(-95, 39, 4) %>%
+  #   #   setView(long, lat, zoom=zoom) %>%
+  #   #   addPolygons(fillColor = ~pal(var),
+  #   #               # fillColor = ~pal(var),
+  #   #               fillOpacity = 0.8,
+  #   #               color = "#BDBDC3",
+  #   #               weight = 1,
+  #   #               popup = popup_dat) %>%
+  #   #   addLegend("bottomright",  # location
+  #   #             pal = pal,     # palette function
+  #   #             values = ~as.numeric(var),
+  #   #             title = paste0(input$var, "\n", "County Quartiles"))
+  # })
   
-  output$dl <- downloadHandler(
-    filename = paste0(Sys.Date(), "_custommap", ".png"), 
-    content = function(file) {
-      mapshot(x = user.created.map(), 
-              file = file, 
-              cliprect = "viewport", # the clipping rectangle matches the height & width from the viewing port
-              selfcontained = TRUE # when this was not specified, the function for produced a PDF of two pages: one of the leaflet map, the other a blank page.
-      )
-    } # end of content() function
-  ) # end of downloadHandler() function
+  # output$dl <- downloadHandler(
+  #   filename = paste0(Sys.Date(), "_custommap", ".png"), 
+  #   content = function(file) {
+  #     mapshot(x = user.created.map(), 
+  #             file = file, 
+  #             cliprect = "viewport", # the clipping rectangle matches the height & width from the viewing port
+  #             selfcontained = TRUE # when this was not specified, the function for produced a PDF of two pages: one of the leaflet map, the other a blank page.
+  #     )
+  #   } # end of content() function
+  # ) # end of downloadHandler() function
+  
+  observeEvent(input$go, {
+    screenshot(id = "mymap",
+               filename = paste0(Sys.Date(), "_custommap"),
+               scale = 2)
+  })
   
  
   ############################################# plot trends ###########################################
