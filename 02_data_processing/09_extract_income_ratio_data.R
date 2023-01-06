@@ -55,7 +55,7 @@ extracted_data <- extracted_data %>% mutate(merge_code = case_when(
   county_name=="Petersburg Census Area" & state_abbreviation=="AK" ~ "petersburgboroughak",
   county_name=="Carson City" & state_abbreviation=="NV" ~ "carsoncitycitynv",
   county_name=="Radford" & state_abbreviation=="VA" ~ "radfordcityva",
-  county_name=="Dona Ana" & state_abbreviation=="NM" ~ "doñaananm",
+  county_name=="Dona Ana" & state_abbreviation=="NM" ~ "doÃ±aananm",
   county_name=="Montgomery County" & state_abbreviation=="AR" ~ "montgomeryar",
   TRUE ~ merge_code 
 ))
